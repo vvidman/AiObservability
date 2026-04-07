@@ -1,0 +1,56 @@
+## --- .NET 10 Specifikus ---
+bin/
+obj/
+publish/
+TestResults/
+
+# Felhasználói beállítások és cache
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet csomagok
+# Ha nem használsz "Central Package Management"-et, a packages mappa felesleges
+packages/
+*.nupkg
+
+## --- Claude Code & AI Eszközök ---
+# A Claude Code belső állapota, előzményei és munkakönyvtára
+.claude/
+.anthropic/
+claude_code_session/
+
+# Ideiglenes logok, ha a Claude kimenetet mentenél
+*.log
+claude-debug.log
+
+## --- Fejlesztői Környezetek (IDE) ---
+# Visual Studio
+.vs/
+[Tt]emp/
+[Log]s/
+
+# VS Code
+.vscode/
+# Megjegyzés: Ha meg akarod tartani a launch.json-t, vedd ki a fenti sort, 
+# és csak a konkrét fájlokat tiltsd le:
+# .vscode/settings.json
+# .vscode/tasks.json
+
+# JetBrains (Rider)
+.idea/
+*.sln.iml
+
+## --- Konfiguráció és Titkok ---
+# Ne kerüljenek be jelszavak/kulcsok a repoba!
+appsettings.Development.json
+appsettings.local.json
+.env
+.env.*
+!.env.example
+usersecrets.json
+
+## --- Operációs Rendszer ---
+.DS_Store
+Thumbs.db
+desktop.ini
