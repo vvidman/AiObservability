@@ -14,17 +14,16 @@
    limitations under the License.
 */
 
+using Microsoft.Extensions.Hosting;
+
 namespace AiObs.Postgres;
 
-/// <summary>Configuration options for <see cref="PostgresTraceStore"/>.</summary>
-public sealed class PostgresTraceStoreOptions
+/// <summary>
+/// Hosted service that ensures the traces table exists on application startup.
+/// </summary>
+internal sealed class SchemaInitializerHostedService(SchemaInitializer initializer) : IHostedService
 {
-    /// <summary>Npgsql connection string. Required.</summary>
-    public required string ConnectionString { get; init; }
+    public Task StartAsync(CancellationToken cancellationToken) => initializer.EnsureCreatedAsync(cancellationToken);
 
-    /// <summary>PostgreSQL schema that contains the traces table. Defaults to <c>public</c>.</summary>
-    internal const string SchemaName = "public";
-
-    /// <summary>Name of the traces table. Defaults to <c>traces</c>.</summary>
-    internal const string TableName = "traces";
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

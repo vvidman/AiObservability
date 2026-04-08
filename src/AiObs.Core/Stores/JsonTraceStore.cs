@@ -76,6 +76,23 @@ public sealed class JsonTraceStore : ITraceStore
     }
 
     /// <inheritdoc />
+    public async Task DeleteAsync(string traceId, CancellationToken cancellationToken = default)
+    {
+        if (!Directory.Exists(_options.OutputPath)) return;
+
+        foreach (var file in Directory.EnumerateFiles(_options.OutputPath, "*.json", SearchOption.AllDirectories))
+        {
+            var json = await File.ReadAllTextAsync(file, cancellationToken);
+            var trace = JsonSerializer.Deserialize<Trace>(json, SerializerOptions);
+            if (trace?.Id == traceId)
+            {
+                File.Delete(file);
+                return;
+            }
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<IReadOnlyList<Trace>> QueryAsync(TraceQuery query, CancellationToken cancellationToken = default)
     {
         if (!Directory.Exists(_options.OutputPath)) return [];

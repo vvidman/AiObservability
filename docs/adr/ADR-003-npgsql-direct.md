@@ -24,3 +24,7 @@ Npgsql direct — no EF Core in the observability library.
 - SQL statements live in `PostgresTraceStore` as constants. Schema changes require manual SQL updates.
 - `SchemaInitializer.EnsureCreatedAsync()` runs `CREATE TABLE IF NOT EXISTS` at startup. There is no migration framework — schema changes in future versions must be handled with manual `ALTER TABLE` statements.
 - Npgsql is the only external dependency of `AiObs.Postgres`.
+
+## Amendment - 2026-04-08
+
+Schema and table names are hardcoded as `internal const string` fields in `PostgresTraceStoreOptions`. They are not exposed as configurable properties to eliminate SQL identifier injection risk without requiring runtime validation.

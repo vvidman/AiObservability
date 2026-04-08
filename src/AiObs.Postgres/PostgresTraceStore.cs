@@ -49,7 +49,7 @@ public sealed class PostgresTraceStore : ITraceStore
         await conn.OpenAsync(cancellationToken);
 
         var sql = $"""
-            INSERT INTO {_options.SchemaName}.{_options.TableName}
+            INSERT INTO {PostgresTraceStoreOptions.SchemaName}.{PostgresTraceStoreOptions.TableName}
                 (id, name, started_at, completed_at, duration_ms, tags, root_spans)
             VALUES (@id, @name, @startedAt, @completedAt, @durationMs, @tags::jsonb, @rootSpans::jsonb)
             ON CONFLICT (id) DO NOTHING
@@ -75,7 +75,7 @@ public sealed class PostgresTraceStore : ITraceStore
 
         var sql = $"""
             SELECT id, name, started_at, completed_at, tags, root_spans
-            FROM {_options.SchemaName}.{_options.TableName}
+            FROM {PostgresTraceStoreOptions.SchemaName}.{PostgresTraceStoreOptions.TableName}
             WHERE id = @id
             """;
 
@@ -86,6 +86,18 @@ public sealed class PostgresTraceStore : ITraceStore
         if (!await reader.ReadAsync(cancellationToken)) return null;
 
         return ReadTrace(reader);
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(string traceId, CancellationToken cancellationToken = default)
+    {
+        await using var conn = new NpgsqlConnection(_options.ConnectionString);
+        await conn.OpenAsync(cancellationToken);
+
+        var sql = $"DELETE FROM {PostgresTraceStoreOptions.SchemaName}.{PostgresTraceStoreOptions.TableName} WHERE id = @id";
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("id", traceId);
+        await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
     /// <inheritdoc />
@@ -125,7 +137,7 @@ public sealed class PostgresTraceStore : ITraceStore
 
         var sql = $"""
             SELECT id, name, started_at, completed_at, tags, root_spans
-            FROM {_options.SchemaName}.{_options.TableName}
+            FROM {PostgresTraceStoreOptions.SchemaName}.{PostgresTraceStoreOptions.TableName}
             {whereClause}
             ORDER BY started_at DESC
             LIMIT @limit
@@ -145,13 +157,13 @@ public sealed class PostgresTraceStore : ITraceStore
 
     private static Trace ReadTrace(NpgsqlDataReader reader) => new()
     {
-        Id = reader.GetString(0),
-        Name = reader.GetString(1),
-        StartedAt = reader.GetFieldValue<DateTimeOffset>(2),
-        CompletedAt = reader.GetFieldValue<DateTimeOffset>(3),
-        Tags = JsonSerializer.Deserialize<Dictionary<string, string>>(reader.GetString(4), SerializerOptions)
+        Id = reader.GetString(reader.GetOrdinal("id")),
+        Name = reader.GetString(reader.GetOrdinal("name")),
+        StartedAt = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("started_at")),
+        CompletedAt = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("completed_at")),
+        Tags = JsonSerializer.Deserialize<Dictionary<string, string>>(reader.GetString(reader.GetOrdinal("tags")), SerializerOptions)
                ?? new Dictionary<string, string>(),
-        RootSpans = JsonSerializer.Deserialize<List<TraceSpan>>(reader.GetString(5), SerializerOptions)
+        RootSpans = JsonSerializer.Deserialize<List<TraceSpan>>(reader.GetString(reader.GetOrdinal("root_spans")), SerializerOptions)
                     ?? []
     };
 }

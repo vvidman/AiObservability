@@ -74,8 +74,10 @@ public sealed class TraceBuilderTests
         var store = new InMemoryTraceStore();
         await using var traceBuilder = store.StartTrace("failing_pipeline");
 
-        var span = traceBuilder.StartSpan("broken_span");
-        // intentionally not completing span or trace
+        using (traceBuilder.StartSpan("broken_span"))
+        {
+            // intentionally not completing span or trace
+        }
 
         // DisposeAsync force-closes and saves
         await ((IAsyncDisposable)traceBuilder).DisposeAsync();

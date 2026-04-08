@@ -1,0 +1,102 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #f5f5f5;
+}
+
+a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  cursor: pointer;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 13px;
+}
+
+button:hover {
+  background: #f0f0f0;
+}
+
+input, select {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+
+tr:hover td {
+  background: #fafafa;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.error {
+  color: #cc0000;
+  padding: 8px;
+  background: #fff0f0;
+  border-radius: 4px;
+}
+
+.status-ok {
+  color: #006600;
+  font-weight: 600;
+}
+
+.status-error {
+  color: #cc0000;
+  font-weight: 600;
+}
+
+.tag-pill {
+  display: inline-block;
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin: 2px;
+}
+
+pre {
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 8px;
+  overflow-x: auto;
+  font-size: 12px;
+  margin: 4px 0;
+}

@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+WORKDIR /src
+
+# Copy solution and project files first for layer caching
+COPY AiObservability.slnx ./
+COPY src/AiObs.Abstractions/AiObs.Abstractions.csproj src/AiObs.Abstractions/
+COPY src/AiObs.Core/AiObs.Core.csproj src/AiObs.Core/
+COPY src/AiObs.Postgres/AiObs.Postgres.csproj src/AiObs.Postgres/
+COPY src/AiObs.Api/AiObs.Api.csproj src/AiObs.Api/
+
+RUN dotnet restore src/AiObs.Api/AiObs.Api.csproj
+
+COPY src/ src/
+RUN dotnet publish src/AiObs.Api/AiObs.Api.csproj \
+    -c Release \
+    -o /app/publish 
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "AiObs.Api.dll"]

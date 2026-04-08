@@ -36,4 +36,7 @@ public interface ITraceStore
 
     /// <summary>Queries traces using the provided filter.</summary>
     Task<IReadOnlyList<Trace>> QueryAsync(TraceQuery query, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes a trace by its ID. No-op if the trace does not exist.</summary>
+    Task DeleteAsync(string traceId, CancellationToken cancellationToken = default);
 }

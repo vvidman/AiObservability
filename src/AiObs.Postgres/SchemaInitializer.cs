@@ -31,7 +31,7 @@ public sealed class SchemaInitializer(PostgresTraceStoreOptions options)
         await conn.OpenAsync(cancellationToken);
 
         var sql = $$"""
-            CREATE TABLE IF NOT EXISTS {{options.SchemaName}}.{{options.TableName}} (
+            CREATE TABLE IF NOT EXISTS {{PostgresTraceStoreOptions.SchemaName}}.{{PostgresTraceStoreOptions.TableName}} (
                 id            TEXT        PRIMARY KEY,
                 name          TEXT        NOT NULL,
                 started_at    TIMESTAMPTZ NOT NULL,
@@ -40,12 +40,12 @@ public sealed class SchemaInitializer(PostgresTraceStoreOptions options)
                 tags          JSONB       NOT NULL DEFAULT '{}',
                 root_spans    JSONB       NOT NULL DEFAULT '[]'
             );
-            CREATE INDEX IF NOT EXISTS ix_{{options.TableName}}_name
-                ON {{options.SchemaName}}.{{options.TableName}} (name);
-            CREATE INDEX IF NOT EXISTS ix_{{options.TableName}}_started_at
-                ON {{options.SchemaName}}.{{options.TableName}} (started_at DESC);
-            CREATE INDEX IF NOT EXISTS ix_{{options.TableName}}_tags
-                ON {{options.SchemaName}}.{{options.TableName}} USING GIN (tags);
+            CREATE INDEX IF NOT EXISTS ix_{{PostgresTraceStoreOptions.TableName}}_name
+                ON {{PostgresTraceStoreOptions.SchemaName}}.{{PostgresTraceStoreOptions.TableName}} (name);
+            CREATE INDEX IF NOT EXISTS ix_{{PostgresTraceStoreOptions.TableName}}_started_at
+                ON {{PostgresTraceStoreOptions.SchemaName}}.{{PostgresTraceStoreOptions.TableName}} (started_at DESC);
+            CREATE INDEX IF NOT EXISTS ix_{{PostgresTraceStoreOptions.TableName}}_tags
+                ON {{PostgresTraceStoreOptions.SchemaName}}.{{PostgresTraceStoreOptions.TableName}} USING GIN (tags);
             """;
 
         await using var cmd = new NpgsqlCommand(sql, conn);

@@ -45,7 +45,7 @@ internal sealed class SpanBuilder : ISpanBuilder
 
     internal string Name => _name;
     internal bool IsCompleted => _isCompleted;
-    internal TraceSpan GetCompletedSpan() => _completedSpan!;
+    internal TraceSpan GetCompletedSpan() => _completedSpan ?? throw new InvalidOperationException($"Span '{_name}' has not been completed yet.");
 
     public ISpanBuilder WithInput(object? value)
     {

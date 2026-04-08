@@ -3,6 +3,7 @@
     <Project Path="src/AiObs.Abstractions/AiObs.Abstractions.csproj" />
     <Project Path="src/AiObs.Core/AiObs.Core.csproj" />
     <Project Path="src/AiObs.Postgres/AiObs.Postgres.csproj" />
+    <Project Path="src/AiObs.Api/AiObs.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/AiObs.Core.Tests/AiObs.Core.Tests.csproj" />

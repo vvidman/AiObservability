@@ -44,19 +44,10 @@ CREATE INDEX IF NOT EXISTS ix_traces_tags       ON traces USING GIN (tags);
 
 ```csharp
 // Program.cs / composition root
-services.AddSingleton<ITraceStore>(provider =>
-{
-    var options = new PostgresTraceStoreOptions
-    {
-        ConnectionString = configuration.GetConnectionString("AiObs")
-            ?? throw new InvalidOperationException("AiObs connection string is required.")
-    };
-    return new PostgresTraceStore(options);
-});
-
-// Ensure schema exists at startup
-var store = app.Services.GetRequiredService<ITraceStore>();
-await ((PostgresTraceStore)store).SchemaInitializer.EnsureCreatedAsync();
+builder.Services.AddPostgresTraceStore(
+    connectionsString: builder.Configuration.GetConnectionString("AiObs")
+        ?? throw new InvalidOperationException("AiObs connection string is required"),
+    initializeSchema: true);
 ```
 
 Or, if registered via extension method (to be added):

@@ -48,6 +48,13 @@ public sealed class InMemoryTraceStore : ITraceStore
     }
 
     /// <inheritdoc />
+    public Task DeleteAsync(string traceId, CancellationToken cancellationToken = default)
+    {
+        _traces.TryRemove(traceId, out _);
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
     public Task<IReadOnlyList<Trace>> QueryAsync(TraceQuery query, CancellationToken cancellationToken = default)
     {
         IEnumerable<Trace> result = _traces.Values;
