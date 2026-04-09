@@ -1,0 +1,6 @@
+src/AiObs.Web/node_modules
+src/AiObs.Web/dist
+**/.vs
+**/bin
+**/obj
+.git

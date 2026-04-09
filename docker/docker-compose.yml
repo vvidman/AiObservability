@@ -12,9 +12,7 @@ services:
       - internal
 
   api:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile.api
+    image: aiobs-api:latest
     restart: unless-stopped
     environment:
       ConnectionStrings__AiObs: "Host=postgres;Port=5432;Database=aiobs;Username=aiobs;Password=${POSTGRES_PASSWORD}"
@@ -25,9 +23,7 @@ services:
       - internal
 
   web:
-    build:
-      context: ../src/AiObs.Web
-      dockerfile: ../../docker/Dockerfile.web
+    image: aiobs-web:latest
     restart: unless-stopped
     ports:
       - "8080:80"
