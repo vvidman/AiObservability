@@ -8,6 +8,7 @@ COPY src/AiObs.Core/AiObs.Core.csproj src/AiObs.Core/
 COPY src/AiObs.Postgres/AiObs.Postgres.csproj src/AiObs.Postgres/
 COPY src/AiObs.Api/AiObs.Api.csproj src/AiObs.Api/
 
+RUN apk add --no-cache krb5-libs icu-libs
 RUN dotnet restore src/AiObs.Api/AiObs.Api.csproj
 
 COPY src/ src/
@@ -17,5 +18,15 @@ RUN dotnet publish src/AiObs.Api/AiObs.Api.csproj \
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
+
+# Rendszerkönyvtárak telepítése a futtatáshoz
+RUN apk add --no-cache krb5-libs icu-libs
+
+# Megkeressük hol a fájl, és csinálunk rá egy linket a pontos néven
+RUN find /usr/lib -name "libgssapi_krb5.so*" -exec ln -s {} /usr/lib/libgssapi_krb5.so.2 \; || true
+
+# Globalizáció engedélyezése (fontos az icu-libs mellé)
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "AiObs.Api.dll"]
