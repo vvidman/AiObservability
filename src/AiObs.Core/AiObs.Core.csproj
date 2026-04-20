@@ -8,6 +8,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <Description>Builder implementations and storage backends for AiObservability. Includes InMemoryTraceStore and JsonTraceStore.</Description>
   </PropertyGroup>
 
 

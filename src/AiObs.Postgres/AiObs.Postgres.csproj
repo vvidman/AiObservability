@@ -15,6 +15,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <Description>PostgreSQL-backed ITraceStore implementation for AiObservability via Npgsql.</Description>
   </PropertyGroup>
 
 </Project>
