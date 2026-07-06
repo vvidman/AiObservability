@@ -48,15 +48,15 @@ flowchart LR
 
 - **Denormalized schema — full span tree as JSONB** (`root_spans` column). The primary access pattern is retrieve-one-trace-by-ID; a single `SELECT` with no joins or recursive CTEs covers it. Span-level aggregate analytics are explicitly out of scope for the initial version. → [ADR-004](docs/adr/ADR-004-denormalized-schema.md)
 
+- **PostgreSQL 16 Alpine over MongoDB, SQLite, or LiteDB**. The target deployment is a NAS with an ARM Cortex-A55 CPU and 1 GB RAM. JSONB gives structured, queryable storage in an ~80 MB image, versus 400 MB+ for MongoDB; SQLite/LiteDB were ruled out for concurrent multi-project writes and lack of SQL-client inspectability. → [ADR-002](docs/adr/ADR-002-postgresql.md)
+
 - **`JsonNode?` for `Input` and `Output`, not `object?`**. Serialization happens eagerly at `WithInput()` / `WithOutput()` call time, so errors surface at the instrumentation site rather than at persistence time. JSONB columns in PostgreSQL render the result as human-readable structured JSON without extra tooling. → [ADR-005](docs/adr/ADR-005-jsonnode-input-output.md)
 
 - **Strict child span validation** — `Complete()` throws `InvalidOperationException` if any child span is still open. Silently auto-closing children would produce traces with incorrect latency data: a worse outcome than a development-time exception. `Dispose()` force-closes with `SpanStatus.Error` to remain compliant with the .NET contract. → [ADR-006](docs/adr/ADR-006-strict-child-span-validation.md)
 
-- **`AiObs.Postgres` in a separate project**. `AiObs.Core` carries zero external NuGet dependencies. Npgsql is isolated to the Postgres project so test and local-dev scenarios never pull in a database driver. → [ADR-007](docs/adr/ADR-007-postgres-separate-project.md)
+- **Npgsql direct, no EF Core, isolated in its own project**. The data access surface is three SQL statements (INSERT, SELECT by ID, filtered SELECT) — EF Core's change tracking has no value for immutable records. Npgsql is confined to `AiObs.Postgres` so `AiObs.Core` stays dependency-free for test and local-dev scenarios. → [ADR-003](docs/adr/ADR-003-npgsql-direct.md), [ADR-007](docs/adr/ADR-007-postgres-separate-project.md)
 
-- **Npgsql direct, no EF Core**. The data access surface is three SQL statements (INSERT, SELECT by ID, filtered SELECT). EF Core's change tracking has no value for immutable records and would introduce a heavyweight dependency into a library that consuming projects may also use. → [ADR-003](docs/adr/ADR-003-npgsql-direct.md)
-
-- **nginx as the single public entry point**. The React SPA uses relative URLs (`/api/traces`) — no IP address is baked into the build. nginx proxies `/api/*` to the API container on the internal Docker network. The API container is never exposed on the host network. → [ADR-009](docs/adr/ADR-009-nginx-reverse-proxy.md)
+- **No authentication on the API or web UI**. The NAS sits on a trusted local network with no internet exposure, and trace data is developer tooling, not PII. Adding auth now would be complexity disproportionate to the risk; nginx is the designated place to add Basic Auth if the threat model changes. → [ADR-010](docs/adr/ADR-010-no-authentication.md)
 
 ---
 
